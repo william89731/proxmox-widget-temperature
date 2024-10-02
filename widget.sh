@@ -34,19 +34,20 @@ HEADER_INFO() {
   ██║      ╚████╔╝ ███████╗    ╚███╔███╔╝██║██████╔╝╚██████╔╝███████╗   ██║
   ╚═╝       ╚═══╝  ╚══════╝     ╚══╝╚══╝ ╚═╝╚═════╝  ╚═════╝ ╚══════╝   ╚═╝
 "
-sleep 3
+sleep 2
 clear
 }
 
 PATCH() {
-  command find $NODES_DIR/Nodes.pm.ori  > /dev/null 2>&1 || FILE+=("not found")
+  #check if patch is already applied
   # command find $PROXMOXLIB_DIR/proxmoxlib.js.ori > /dev/null 2>&1 || FILE="not found"
   # command find $PVEMANAGERLIB_DIR/pvemanagerlib.js.ori > /dev/null 2>&1 || FILE="not found"
+  command find $NODES_DIR/Nodes.pm.orig  > /dev/null 2>&1 || FILE+=("not found")
   if [[ "$FILE" != "not found" ]]; then
-    ERROR "patch already applyed"
+    ERROR "patch already applied"
   else
     INFO "apply patch.."
-
+    #check necessay package
     command -v patch > /dev/null 2>&1 || MISSING_PACKAGES+=("patch")
     if [[ "$MISSING_PACKAGES" == "patch" ]]; then
       sudo apt update
@@ -57,34 +58,55 @@ PATCH() {
     if [[ "$MISSING_PACKAGES" == "sensors" ]]; then
       ERROR "please, install lm-sensor"
     fi
-    # download patch
-    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/Nodes.pm.patch
+    # download and apply patch
+    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/Nodes.pm.patch?token=GHSAT0AAAAAACYK2CD6EFDCJYXGHTMLFYTOZX456QA
     if [ $? -ne 0 ]; then
       ERROR "problem downlaod patch"
+    else
+      command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch
     fi
 
-    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com//Nodes.pm.patch
+    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch?token=GHSAT0AAAAAACYK2CD7X73AXMFC7G2AFTTSZX4574Q
     if [ $? -ne 0 ]; then
       ERROR "problem downlaod patch"
+    else
+      command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch
     fi
 
-    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com//Nodes.pm.patch
+    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch?token=GHSAT0AAAAAACYK2CD6F3BFQZSX2QNQLYT4ZX46A3Q
     if [ $? -ne 0 ]; then
       ERROR "problem downlaod patch"
+    else
+      command patch -b /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch
     fi
-    #apply patch
-    command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch
-    command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch
-    command patch -b /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch
 
     rm *.patch
 
-    command systemctl restart pve.proxy
-  fi
 
+  fi
+}
+
+REMOVE() {
+  command find $NODES_DIR/Nodes.pm.orig  > /dev/null 2>&1 || FILE+=("not found")
+  if [[ "$FILE" != "not found" ]]; then
+    command rm /usr/share/perl5/PVE/API2/Nodes.pm
+    command mv /usr/share/perl5/PVE/API2/Nodes.pm.orig /usr/share/perl5/PVE/API2/Nodes.pm
+
+    comand rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    command mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+
+    command rm /usr/share/pve-manager/js/pvemanagerlib.js
+    command mv /usr/share/pve-manager/js/pvemanagerlib.js.orig /usr/share/pve-manager/js/pvemanagerlib.js
+  else
+    ERROR "patch not applied"
+  fi
 }
 
 START_ROUTINE() {
+  WARN "tested on pve-manager 8.2.7. take your own risks!"
+
+  sleep 2 & echo ""
+
   INFO "do you Apply[A] or Remove[R] patch?";
   read;
 
@@ -94,17 +116,18 @@ START_ROUTINE() {
   elif [[ $REPLY =~ ^(R) ]]; then
     clear
     WARN "remove patch"
-    #RESTORE
+    REMOVE
   else
-    ERROR "finish program"
+    ERROR "exit"
   fi
 }
 
-#HEADER_INFO
+HEADER_INFO
 
 START_ROUTINE
+
+command systemctl restart pve.proxy
 
 clear
 
 INFO "clear cache browser"
-
