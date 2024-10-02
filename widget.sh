@@ -59,21 +59,21 @@ PATCH() {
       ERROR "please, install lm-sensor"
     fi
     # download and apply patch
-    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/Nodes.pm.patch?token=GHSAT0AAAAAACYK2CD6EFDCJYXGHTMLFYTOZX456QA
+    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/Nodes.pm.patch
     if [ $? -ne 0 ]; then
       ERROR "problem downlaod patch"
     else
       command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch
     fi
 
-    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch?token=GHSAT0AAAAAACYK2CD7X73AXMFC7G2AFTTSZX4574Q
+    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch
     if [ $? -ne 0 ]; then
       ERROR "problem downlaod patch"
     else
       command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch
     fi
 
-    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch?token=GHSAT0AAAAAACYK2CD6F3BFQZSX2QNQLYT4ZX46A3Q
+    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch
     if [ $? -ne 0 ]; then
       ERROR "problem downlaod patch"
     else
