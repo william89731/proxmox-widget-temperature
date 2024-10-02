@@ -30,3 +30,28 @@ bash -c "$(wget -qLO - https://raw.githubusercontent.com/william89731/proxmox-wi
 ```
 
 and follow instruction
+
+### troubleshooting
+
+![image](https://github.com/user-attachments/assets/926af351-4365-45dc-8b9d-ae243bda0e29)
+
+
+- After applied this patch, no data is read
+
+  ```solution```:
+
+  run command:
+
+  ```bash
+  sensor -j
+  ```
+  the output read data sensors in your machine.
+
+![image](https://github.com/user-attachments/assets/e924bcf0-24bf-4929-9e01-576f49c0adc9)
+
+
+  now, you can change file /usr/share/perl5/PVE/API2/Nodes.pm and adjust your values. later, run ```systemctl restart pveproxy``` and clear cache browser
+
+### Credit
+
+thanks to [alexleigh](https://github.com/alexleigh)
