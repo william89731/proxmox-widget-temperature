@@ -1,0 +1,1 @@
+# proxmox-widget-temperature
