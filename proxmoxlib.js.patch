@@ -1,0 +1,16 @@
+--- proxmoxlib.js	2024-05-17 05:01:14.000000000 +0200
++++ /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js	2024-10-01 00:49:24.453252976 +0200
+@@ -1094,6 +1094,13 @@
+ 	return Proxmox.Utils.render_size_usage(record.used, record.total);
+     },
+ 
++	render_node_temp: function(record) {
++		if (!record || !Ext.isNumeric(record.used) || !Ext.isNumeric(record.total)) {
++			return '-';
++		}
++		return record.used.toFixed(1) + '°C (crit: ' + record.total.toFixed(1) + '°C)';
++	},
++
+     loadTextFromFile: function(file, callback, maxBytes) {
+ 	let maxSize = maxBytes || 8192;
+ 	if (file.size > maxSize) {
