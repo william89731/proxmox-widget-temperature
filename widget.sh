@@ -126,7 +126,7 @@ HEADER_INFO
 
 START_ROUTINE
 
-command systemctl restart pve.proxy
+command systemctl restart pveproxy
 
 clear
 
