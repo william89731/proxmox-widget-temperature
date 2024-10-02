@@ -26,7 +26,7 @@
 in your terminal, run:
 
 ```bash
-curl -sSfL https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/widget.sh | bash
+bash -c "$(wget -qLO - https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/widget.sh)"
 ```
 
 and follow instruction
