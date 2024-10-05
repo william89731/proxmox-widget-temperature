@@ -33,14 +33,12 @@ and follow instruction
 
   
   ```bash
-  rm /usr/share/perl5/PVE/API2/Nodes.pm.orig \
-  rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig \
-  rm /usr/share/pve-manager/js/pvemanagerlib.js.orig
-  ```
-  
-  ```bash
+  rm /usr/share/perl5/PVE/API2/Nodes.pm.orig && \
+  rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig && \
+  rm /usr/share/pve-manager/js/pvemanagerlib.js.orig && \
   apt install --reinstall pve-manager proxmox-widget-toolkit
   ```
+  
 
   ```bash
   systemctl restart pveproxy
