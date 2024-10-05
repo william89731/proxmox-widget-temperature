@@ -4,7 +4,7 @@
  	    textField: 'maxdisk',
  	    renderer: Proxmox.Utils.render_size,
  	},
-+	
++
  	{
  	    xtype: 'box',
  	    height: 20,
@@ -20,14 +20,14 @@
 +	    renderer: Proxmox.Utils.render_node_temp,
 +	},
 +	{
-+	    itemId: 'hd1temp',
++	    itemId: 'disktemp',
 +	    iconCls: 'fa fa-fw fa-thermometer-half',
 +	    title: gettext('DISK temp'),
-+	    valueField: 'hd1temp',
-+	    maxField: 'hd1temp',
++	    valueField: 'disktemp',
++	    maxField: 'disktemp',
 +	    renderer: Proxmox.Utils.render_node_temp,
-+	},	
-+	
++	},
++
 +	{
  	    itemId: 'cpus',
 -	    colspan: 2,

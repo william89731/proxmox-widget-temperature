@@ -1,36 +1,17 @@
 --- Nodes.pm	2024-09-23 11:43:24.000000000 +0200
 +++ /usr/share/perl5/PVE/API2/Nodes.pm	2024-10-01 00:44:45.524469193 +0200
-@@ -495,6 +495,65 @@
+@@ -495,6 +495,46 @@
  	    free => $dinfo->{blocks} - $dinfo->{used},
  	};
- 
+
 +	my %sensors_config = (
 +		cputemp => {
 +			jsonpath => ['coretemp-isa-0000', 'Package id 0'],
 +			valkey => 'temp1_input',
 +			critkey => 'temp1_crit',
 +		},
-+		pchtemp => {
-+			jsonpath => ['pch_cannonlake-virtual-0', 'temp1'],
-+			valkey => 'temp1_input',
-+		},
-+		nvme1temp => {
-+			jsonpath => ['nvme-pci-0100', 'Composite'],
-+			valkey => 'temp1_input',
-+			critkey => 'temp1_crit',
-+		},
-+		nvme2temp => {
-+			jsonpath => ['nvme-pci-0200', 'Composite'],
-+			valkey => 'temp1_input',
-+			critkey => 'temp1_crit',
-+		},
-+		hd1temp => {
-+			jsonpath => ['drivetemp-scsi-1-0', 'temp1'],
-+			valkey => 'temp1_input',
-+			critkey => 'temp1_crit',
-+		},
-+		hd2temp => {
-+			jsonpath => ['drivetemp-scsi-2-0', 'temp1'],
++		disktemp => {
++			jsonpath => ['sensor-name-adapter', 'val-input'],
 +			valkey => 'temp1_input',
 +			critkey => 'temp1_crit',
 +		},
@@ -65,4 +46,3 @@
 +
  	return $res;
      }});
- 

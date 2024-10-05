@@ -102,10 +102,26 @@ REMOVE() {
   fi
 }
 
-START_ROUTINE() {
-  WARN "tested on pve-manager 8.2.7. take your own risks!"
+SENSOR_CONFIG() {
+  HDDSENSOR=$(sensors | grep "drive" )
+  if [[ ! -z "$HDDSENSOR" ]]; then
+  echo "$HDDSENSOR"
+  sed -i 's/sensor-name-adapter/'$HDDSENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
+  sed -i 's/val-input/temp1/g' /usr/share/perl5/PVE/API2/Nodes.pm
+  fi
 
-  sleep 2 & echo ""
+  NVESENSOR=$(sensors | grep "nve" )
+  if [[ ! -z "$NVESENSOR" ]]; then
+  echo "$NVESENSOR"
+  sed -i 's/sensor-name-adapter/'$NVESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
+  sed -i 's/val-input/Composite/g' /usr/share/perl5/PVE/API2/Nodes.pm
+  fi
+}
+
+START_ROUTINE() {
+  WARN "Tested on pve-manager 8.2.7. Take your own risks!"
+
+  sleep 4 & echo ""
 
   INFO "do you Apply[A] or Remove[R] patch?";
   read;
@@ -113,6 +129,7 @@ START_ROUTINE() {
   if [[ $REPLY =~ ^(A) ]]; then
     clear
     PATCH
+    SENSOR_CONFIG
   elif [[ $REPLY =~ ^(R) ]]; then
     clear
     WARN "remove patch"
