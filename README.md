@@ -10,18 +10,9 @@
 ### Disclaimer
 - this mod must be erase after update packages
 - take your own risks!
-- if you have problem:
-  ```bash
-  apt install --reinstall libtemplate-perl
-  ```
-  ```bash
-  systemctl restart pveproxy
-  ```
+
 
 ### Install
-
-![image](https://github.com/user-attachments/assets/4421b2c3-b5d3-493c-92bc-d5cda59b0cb7)
-
 
 in your terminal, run:
 
@@ -29,14 +20,27 @@ in your terminal, run:
 bash -c "$(wget -qLO - https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/widget.sh)"
 ```
 
+
+![image](https://github.com/user-attachments/assets/4421b2c3-b5d3-493c-92bc-d5cda59b0cb7)
+
 and follow instruction
 
 ### troubleshooting
 
-![image](https://github.com/user-attachments/assets/926af351-4365-45dc-8b9d-ae243bda0e29)
+- if you have problem
 
+  ```solution:```
+  
+  ```bash
+  apt install --reinstall libtemplate-perl
+  ```
+  ```bash
+  systemctl restart pveproxy
+  ```
 
 - After applied this patch, no data is read
+
+![image](https://github.com/user-attachments/assets/926af351-4365-45dc-8b9d-ae243bda0e29)
 
   ```solution```:
 
@@ -47,10 +51,15 @@ and follow instruction
   ```
   the output read data sensors in your machine.
 
-![image](https://github.com/user-attachments/assets/e924bcf0-24bf-4929-9e01-576f49c0adc9)
+  ![image](https://github.com/user-attachments/assets/99b29a4f-4540-46d4-80ee-8bb57ccaa6e4)
 
 
   now, you can change file /usr/share/perl5/PVE/API2/Nodes.pm and adjust your values. later, run ```systemctl restart pveproxy``` and clear cache browser
+
+![image](https://github.com/user-attachments/assets/9b65774d-7b5b-4775-a963-3aa5ae177f09)
+
+  
+
 
 ### Credit
 
