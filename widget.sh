@@ -92,7 +92,7 @@ REMOVE() {
     command rm /usr/share/perl5/PVE/API2/Nodes.pm
     command mv /usr/share/perl5/PVE/API2/Nodes.pm.orig /usr/share/perl5/PVE/API2/Nodes.pm
 
-    comand rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
     command mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 
     command rm /usr/share/pve-manager/js/pvemanagerlib.js
@@ -105,14 +105,14 @@ REMOVE() {
 SENSOR_CONFIG() {
   HDDSENSOR=$(sensors | grep "drive" )
   if [[ ! -z "$HDDSENSOR" ]]; then
-  echo "$HDDSENSOR"
+  #echo "$HDDSENSOR"
   sed -i 's/sensor-name-adapter/'$HDDSENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
   sed -i 's/val-input/temp1/g' /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 
   NVESENSOR=$(sensors | grep "nve" )
   if [[ ! -z "$NVESENSOR" ]]; then
-  echo "$NVESENSOR"
+  #echo "$NVESENSOR"
   sed -i 's/sensor-name-adapter/'$NVESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
   sed -i 's/val-input/Composite/g' /usr/share/perl5/PVE/API2/Nodes.pm
   fi
