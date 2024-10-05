@@ -110,10 +110,10 @@ SENSOR_CONFIG() {
   sed -i 's/val-input/temp1/g' /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 
-  NVESENSOR=$(sensors | grep "nve" )
-  if [[ ! -z "$NVESENSOR" ]]; then
+  NVMESENSOR=$(sensors | grep "nvme" )
+  if [[ ! -z "$NVMESENSOR" ]]; then
   #echo "$NVESENSOR"
-  sed -i 's/sensor-name-adapter/'$NVESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
+  sed -i 's/sensor-name-adapter/'$NVMESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
   sed -i 's/val-input/Composite/g' /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 }
