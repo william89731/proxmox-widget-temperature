@@ -7,6 +7,8 @@
 
 # Proxmox widget temperature
 
+![image](https://github.com/user-attachments/assets/4421b2c3-b5d3-493c-92bc-d5cda59b0cb7)
+
 ### Disclaimer
 - this mod must be erase after update packages
 - take your own risks!
@@ -20,29 +22,15 @@ in your terminal, run:
 bash -c "$(wget -qLO - https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/widget.sh)"
 ```
 
+![image](https://github.com/user-attachments/assets/d090918c-48e7-4a7c-bcc1-c3cc1af349ee)
 
-![image](https://github.com/user-attachments/assets/4421b2c3-b5d3-493c-92bc-d5cda59b0cb7)
+
+
+
 
 and follow instruction
 
 ### troubleshooting
-
-- if you have problem
-
-  ```solution:```
-
-  
-  ```bash
-  rm /usr/share/perl5/PVE/API2/Nodes.pm.orig && \
-  rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig && \
-  rm /usr/share/pve-manager/js/pvemanagerlib.js.orig && \
-  apt install --reinstall pve-manager proxmox-widget-toolkit
-  ```
-  
-
-  ```bash
-  systemctl restart pveproxy
-  ```
 
 - After applied this patch, no data is read
 
