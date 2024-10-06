@@ -2,40 +2,42 @@
 
 NODES_DIR=${NODES_DIR:-/usr/share/perl5/PVE/API2}
 
+# set -o errexit
+#
+# set -o pipefail
 #PROXMOXLIB_DIR=${PROXMOXLIB_DIR:-/usr/share/javascript/proxmox-widget-toolkit}
 
 #PVEMANAGERLIB_DIR=${PVEMANAGERLIB_DIR:-/usr/share/pve-manager/js}
 
 INFO()  {
   echo -e "\e[32m $*\e[39m";
-  }
+}
 
 WARN()  {
   echo -e "\e[33m $*\e[39m";
-  }
+}
 
 ERROR() {
   echo -e "\e[31m $*\e[39m";
   exit 1
-  }
+}
 
 PAUSE() {
   echo "pause..." & sleep 3000
 }
 
-
 HEADER_INFO() {
   clear
   echo "
-  ██████╗ ██╗   ██╗███████╗    ██╗    ██╗██╗██████╗  ██████╗ ███████╗████████╗
-  ██╔══██╗██║   ██║██╔════╝    ██║    ██║██║██╔══██╗██╔════╝ ██╔════╝╚══██╔══╝
-  ██████╔╝██║   ██║█████╗      ██║ █╗ ██║██║██║  ██║██║  ███╗█████╗     ██║
-  ██╔═══╝ ╚██╗ ██╔╝██╔══╝      ██║███╗██║██║██║  ██║██║   ██║██╔══╝     ██║
-  ██║      ╚████╔╝ ███████╗    ╚███╔███╔╝██║██████╔╝╚██████╔╝███████╗   ██║
-  ╚═╝       ╚═══╝  ╚══════╝     ╚══╝╚══╝ ╚═╝╚═════╝  ╚═════╝ ╚══════╝   ╚═╝
-"
-sleep 2
-clear
+  ██████╗ ██████╗  ██████╗ ██╗  ██╗███╗   ███╗ ██████╗ ██╗  ██╗
+  ██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝████╗ ████║██╔═══██╗╚██╗██╔╝
+  ██████╔╝██████╔╝██║   ██║ ╚███╔╝ ██╔████╔██║██║   ██║ ╚███╔╝
+  ██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗ ██║╚██╔╝██║██║   ██║ ██╔██╗
+  ██║     ██║  ██║╚██████╔╝██╔╝ ██╗██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗
+  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝
+  "
+  sleep 3
+  clear
 }
 
 PATCH() {
@@ -43,15 +45,19 @@ PATCH() {
   # command find $PROXMOXLIB_DIR/proxmoxlib.js.ori > /dev/null 2>&1 || FILE="not found"
   # command find $PVEMANAGERLIB_DIR/pvemanagerlib.js.ori > /dev/null 2>&1 || FILE="not found"
   command find $NODES_DIR/Nodes.pm.orig  > /dev/null 2>&1 || FILE+=("not found")
+
   if [[ "$FILE" != "not found" ]]; then
     ERROR "patch already applied"
+
   else
     INFO "apply patch.."
+    echo ""
+    sleep 3
     #check necessay package
     command -v patch > /dev/null 2>&1 || MISSING_PACKAGES+=("patch")
     if [[ "$MISSING_PACKAGES" == "patch" ]]; then
-      sudo apt update
-      sudo apt install -y $MISSING_PACKAGES
+      command apt update
+      command apt install -y $MISSING_PACKAGES
     fi
 
     command -v sensors > /dev/null 2>&1 || MISSING_PACKAGES+=("sensors")
@@ -87,14 +93,15 @@ PATCH() {
 }
 
 REMOVE() {
+  INFO "remove patch.."
+  echo ""
+  sleep 3
   command find $NODES_DIR/Nodes.pm.orig  > /dev/null 2>&1 || FILE+=("not found")
   if [[ "$FILE" != "not found" ]]; then
     command rm /usr/share/perl5/PVE/API2/Nodes.pm
     command mv /usr/share/perl5/PVE/API2/Nodes.pm.orig /usr/share/perl5/PVE/API2/Nodes.pm
-
     command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
     command mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-
     command rm /usr/share/pve-manager/js/pvemanagerlib.js
     command mv /usr/share/pve-manager/js/pvemanagerlib.js.orig /usr/share/pve-manager/js/pvemanagerlib.js
   else
@@ -105,37 +112,50 @@ REMOVE() {
 SENSOR_CONFIG() {
   HDDSENSOR=$(sensors | grep "drive" )
   if [[ ! -z "$HDDSENSOR" ]]; then
-  #echo "$HDDSENSOR"
-  sed -i 's/sensor-name-adapter/'$HDDSENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
-  sed -i 's/val-input/temp1/g' /usr/share/perl5/PVE/API2/Nodes.pm
+    #echo "$HDDSENSOR"
+    sed -i 's/sensor-name-adapter/'$HDDSENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
+    sed -i 's/val-input/temp1/g' /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 
   NVMESENSOR=$(sensors | grep "nvme" )
   if [[ ! -z "$NVMESENSOR" ]]; then
-  #echo "$NVESENSOR"
-  sed -i 's/sensor-name-adapter/'$NVMESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
-  sed -i 's/val-input/Composite/g' /usr/share/perl5/PVE/API2/Nodes.pm
+    #echo "$NVESENSOR"
+    sed -i 's/sensor-name-adapter/'$NVMESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
+    sed -i 's/val-input/Composite/g' /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 }
 
+RESTORE() {
+  INFO "restore original files.."
+  echo ""
+  sleep 3
+  command rm /usr/share/perl5/PVE/API2/Nodes.pm.orig
+  command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig
+  command rm /usr/share/pve-manager/js/pvemanagerlib.js.orig
+  command apt install --reinstall pve-manager proxmox-widget-toolkit
+}
+
 START_ROUTINE() {
-  WARN "Tested on pve-manager 8.2.7. Take your own risks!"
+  OPTS=$(whiptail \
+    --title "Proxmox Widget Temperature" \
+    --menu "Tested on pve-manager 8.2.7. Take your own risks!" 14 58 3 \
+    "Apply patch" " " \
+    "Remove patch" " " \
+    "Restore original files" " " 3>&2 2>&1 1>&3)
 
-  sleep 4 & echo ""
+  if [[ $OPTS == 'Apply patch' ]]; then
+  PATCH
+  SENSOR_CONFIG
 
-  INFO "do you Apply[A] or Remove[R] patch?";
-  read;
+  elif [[ $OPTS == "Remove patch" ]]; then
+  REMOVE
 
-  if [[ $REPLY =~ ^(A) ]]; then
-    clear
-    PATCH
-    SENSOR_CONFIG
-  elif [[ $REPLY =~ ^(R) ]]; then
-    clear
-    WARN "remove patch"
-    REMOVE
+  elif [[ $OPTS == "Restore original files" ]]; then
+  RESTORE
+
   else
-    ERROR "exit"
+  ERROR "exit"
+
   fi
 }
 
