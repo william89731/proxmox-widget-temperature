@@ -14,7 +14,7 @@
 - take your own risks!
 
 
-### Install
+### Usage
 
 in your terminal, run:
 
@@ -22,7 +22,8 @@ in your terminal, run:
 bash -c "$(wget -qLO - https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/widget.sh)"
 ```
 
-![image](https://github.com/user-attachments/assets/d090918c-48e7-4a7c-bcc1-c3cc1af349ee)
+![image](https://github.com/user-attachments/assets/a0c2b48c-485a-4374-9f2e-de46f14112dd)
+
 
 
 
