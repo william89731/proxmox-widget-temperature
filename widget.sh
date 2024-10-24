@@ -9,26 +9,27 @@ NODES_DIR=${NODES_DIR:-/usr/share/perl5/PVE/API2}
 
 #PVEMANAGERLIB_DIR=${PVEMANAGERLIB_DIR:-/usr/share/pve-manager/js}
 
-INFO()  {
-  echo -e "\e[32m $*\e[39m";
+INFO() {
+  echo -e "\e[32m $*\e[39m"
 }
 
-WARN()  {
-  echo -e "\e[33m $*\e[39m";
+WARN() {
+  echo -e "\e[33m $*\e[39m"
 }
 
 ERROR() {
-  echo -e "\e[31m $*\e[39m";
+  echo -e "\e[31m $*\e[39m"
   exit 1
 }
 
 PAUSE() {
-  echo "pause..." & sleep 3000
+  echo "pause..." &
+  sleep 3000
 }
 
-HEADER_INFO() {
+LOGO() {
   clear
-  cat << "EOF"
+  cat <<"EOF"
 
   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠦⢤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠳⢦⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -63,131 +64,196 @@ EOF
   clear
 }
 
+UPDATE() {
+  clear
+  command find "$NODES_DIR"/Nodes.pm.orig >/dev/null 2>&1 || FILE+=("false")
+
+  if [[ "${FILE[*]}" == "false" ]]; then
+    ERROR "patch not found"
+
+  else
+    clear
+    INFO "update patch.."
+    sleep 3
+    # download and update patch
+    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/Nodes.pm.patch >/dev/null 2>&1 || PATCH+=("false")
+    if [ "${PATCH[*]}" == "false" ]; then
+      ERROR "problem downlaod patch"
+    else
+      command rm /usr/share/perl5/PVE/API2/Nodes.pm >/dev/null 2>&1
+      command mv /usr/share/perl5/PVE/API2/Nodes.pm.orig /usr/share/perl5/PVE/API2/Nodes.pm >/dev/null 2>&1
+      command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch >/dev/null 2>&1
+    fi
+
+    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch >/dev/null 2>&1 || PATCH+=("false")
+    if [ "${PATCH[*]}" == "false" ]; then
+      ERROR "problem downlaod patch"
+    else
+      command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js >/dev/null 2>&1
+      command mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js >/dev/null 2>&1
+      command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch >/dev/null 2>&1
+    fi
+
+    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch >/dev/null 2>&1 || PATCH+=("false")
+    if [ "${PATCH[*]}" == "false" ]; then
+      ERROR "problem downlaod patch"
+    else
+      command rm /usr/share/pve-manager/js/pvemanagerlib.js >/dev/null 2>&1
+      command mv /usr/share/pve-manager/js/pvemanagerlib.js.orig /usr/share/pve-manager/js/pvemanagerlib.js >/dev/null 2>&1
+      command patch -b /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch >/dev/null 2>&1
+    fi
+
+    # shellcheck disable=SC2035
+    rm *.patch
+  fi
+
+  RESULT="Patch updated \nclear cache browser"
+}
+
 PATCH() {
   #check if patch is already applied
-  # command find $PROXMOXLIB_DIR/proxmoxlib.js.ori > /dev/null 2>&1 || FILE="not found"
-  # command find $PVEMANAGERLIB_DIR/pvemanagerlib.js.ori > /dev/null 2>&1 || FILE="not found"
-  command find $NODES_DIR/Nodes.pm.orig  > /dev/null 2>&1 || FILE+=("not found")
+  command find "$NODES_DIR"/Nodes.pm.orig >/dev/null 2>&1 || FILE+=("false")
 
-  if [[ "$FILE" != "not found" ]]; then
+  if [[ "${FILE[*]}" != "false" ]]; then
     ERROR "patch already applied"
 
   else
+    clear
     INFO "apply patch.."
     echo ""
     sleep 3
     #check necessay package
-    command -v patch > /dev/null 2>&1 || MISSING_PACKAGES+=("patch")
-    if [[ "$MISSING_PACKAGES" == "patch" ]]; then
-      command apt update
-      command apt install -y $MISSING_PACKAGES
+    command -v patch >/dev/null 2>&1 || MISSING_PACKAGES+=("patch")
+    if [[ "${MISSING_PACKAGES[*]}" == "patch" ]]; then
+      command apt-get update >/dev/null 2>&1
+      command apt-get install -y "${MISSING_PACKAGES[*]}" >/dev/null 2>&1
     fi
 
-    command -v sensors > /dev/null 2>&1 || MISSING_PACKAGES+=("sensors")
-    if [[ "$MISSING_PACKAGES" == "sensors" ]]; then
+    command -v sensors >/dev/null 2>&1 || MISSING_PACKAGES+=("sensors")
+    if [[ "${MISSING_PACKAGES[*]}" == "sensors" ]]; then
       ERROR "please, install lm-sensor"
     fi
     # download and apply patch
-    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/Nodes.pm.patch
-    if [ $? -ne 0 ]; then
+    command curl -sSfLo Nodes.pm.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/Nodes.pm.patch >/dev/null 2>&1 || PATCH+=("false")
+    if [ "${PATCH[*]}" == "false" ]; then
       ERROR "problem downlaod patch"
     else
-      command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch
+      command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch >/dev/null 2>&1
     fi
 
-    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch
-    if [ $? -ne 0 ]; then
+    command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch >/dev/null 2>&1 || PATCH+=("false")
+    if [ "${PATCH[*]}" == "false" ]; then
       ERROR "problem downlaod patch"
     else
-      command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch
+      command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch >/dev/null 2>&1
     fi
 
-    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch
-    if [ $? -ne 0 ]; then
+    command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch >/dev/null 2>&1 || PATCH+=("false")
+    if [ "${PATCH[*]}" == "false" ]; then
       ERROR "problem downlaod patch"
     else
-      command patch -b /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch
+      command patch -b /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch >/dev/null 2>&1
     fi
 
+    # shellcheck disable=SC2035
     rm *.patch
-
-
   fi
+
+  RESULT="patch applied \nclear cache browser"
 }
 
 REMOVE() {
+  clear
   INFO "remove patch.."
   echo ""
   sleep 3
-  command find $NODES_DIR/Nodes.pm.orig  > /dev/null 2>&1 || FILE+=("not found")
-  if [[ "$FILE" != "not found" ]]; then
-    command rm /usr/share/perl5/PVE/API2/Nodes.pm
-    command mv /usr/share/perl5/PVE/API2/Nodes.pm.orig /usr/share/perl5/PVE/API2/Nodes.pm
-    command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-    command mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-    command rm /usr/share/pve-manager/js/pvemanagerlib.js
-    command mv /usr/share/pve-manager/js/pvemanagerlib.js.orig /usr/share/pve-manager/js/pvemanagerlib.js
+  command find "$NODES_DIR"/Nodes.pm.orig >/dev/null 2>&1 || FILE+=("false")
+  if [[ "${FILE[*]}" != "false" ]]; then
+    command rm /usr/share/perl5/PVE/API2/Nodes.pm >/dev/null 2>&1
+    command mv /usr/share/perl5/PVE/API2/Nodes.pm.orig /usr/share/perl5/PVE/API2/Nodes.pm >/dev/null 2>&1
+    command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js >/dev/null 2>&1
+    command mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js >/dev/null 2>&1
+    command rm /usr/share/pve-manager/js/pvemanagerlib.js >/dev/null 2>&1
+    command mv /usr/share/pve-manager/js/pvemanagerlib.js.orig /usr/share/pve-manager/js/pvemanagerlib.js >/dev/null 2>&1
+
   else
     ERROR "patch not applied"
   fi
+
+  RESULT="patch removed \nclear cache browser"
+
 }
 
 SENSOR_CONFIG() {
-  HDDSENSOR=$(sensors | grep "drive" )
-  if [[ ! -z "$HDDSENSOR" ]]; then
-    #echo "$HDDSENSOR"
-    sed -i 's/sensor-name-adapter/'$HDDSENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
-    sed -i 's/val-input/temp1/g' /usr/share/perl5/PVE/API2/Nodes.pm
+  HDDSENSOR=$(command sensors | grep "drive") >/dev/null 2>&1 || HDDSENSOR+=("false")
+  if [[ "${HDDSENSOR[*]}" != "false" ]]; then
+
+    sed -i "s/sensor-name-adapter/${HDDSENSOR[*]}/g" /usr/share/perl5/PVE/API2/Nodes.pm
+    sed -i "s/val-input/temp1/g" /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 
-  NVMESENSOR=$(sensors | grep "nvme" )
-  if [[ ! -z "$NVMESENSOR" ]]; then
+  NVMESENSOR=$(command sensors | grep "nvme") >/dev/null 2>&1 || NVMESENSOR+=("false")
+  if [[ "${NVMESENSOR[*]}" != "false" ]]; then
     #echo "$NVESENSOR"
-    sed -i 's/sensor-name-adapter/'$NVMESENSOR'/g' /usr/share/perl5/PVE/API2/Nodes.pm
-    sed -i 's/val-input/Composite/g' /usr/share/perl5/PVE/API2/Nodes.pm
+    sed -i "s/sensor-name-adapter/${NVMESENSOR[*]}/g" /usr/share/perl5/PVE/API2/Nodes.pm
+    sed -i "s/val-input/Composite/g" /usr/share/perl5/PVE/API2/Nodes.pm
   fi
 }
 
 RESTORE() {
+  clear
   INFO "restore original files.."
   echo ""
   sleep 3
-  command rm /usr/share/perl5/PVE/API2/Nodes.pm.orig
-  command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig
-  command rm /usr/share/pve-manager/js/pvemanagerlib.js.orig
-  command apt install --reinstall pve-manager proxmox-widget-toolkit
+  command rm /usr/share/perl5/PVE/API2/Nodes.pm.orig >/dev/null 2>&1
+  command rm /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.orig >/dev/null 2>&1
+  command rm /usr/share/pve-manager/js/pvemanagerlib.js.orig >/dev/null 2>&1
+  command apt install --reinstall pve-manager proxmox-widget-toolkit >/dev/null 2>&1
+  #command systemctl restart pveproxy
+  RESULT="original files restored \nclear cache browser"
 }
 
-START_ROUTINE() {
-  OPTS=$(whiptail \
-    --title "Proxmox Widget Temperature" \
-    --menu "Tested on pve-manager 8.2.7. Take your own risks!" 14 58 3 \
-    "Apply patch" " " \
-    "Remove patch" " " \
-    "Restore original files" " " 3>&2 2>&1 1>&3)
+ROUTINE() {
+  clear
+  while true; do
+    OPTS=$(whiptail \
+      --title "Proxmox Widget Temperature" \
+      --menu "Tested on pve-manager 8.2.7. Take your own risks!" 14 58 4 \
+      "UPDATE" "update patch " \
+      "APPLY" "apply patch " \
+      "REMOVE" "remove patch " \
+      "RESTORE" "restore original files " 3>&2 2>&1 1>&3)
 
-  if [[ $OPTS == 'Apply patch' ]]; then
-  PATCH
-  SENSOR_CONFIG
+    case "$OPTS" in
+    UPDATE)
+      UPDATE
+      SENSOR_CONFIG
+      ;;
 
-  elif [[ $OPTS == "Remove patch" ]]; then
-  REMOVE
+    APPLY)
+      PATCH
+      SENSOR_CONFIG
+      ;;
 
-  elif [[ $OPTS == "Restore original files" ]]; then
-  RESTORE
+    REMOVE)
+      REMOVE
+      ;;
 
-  else
-  ERROR "exit"
+    RESTORE)
+      RESTORE
+      ;;
 
-  fi
+    *)
+      ERROR "exit"
+      ;;
+
+    esac
+
+    command systemctl restart pveproxy
+    whiptail --msgbox "$RESULT" 10 40
+  done
 }
 
-HEADER_INFO
+LOGO
 
-START_ROUTINE
-
-command systemctl restart pveproxy
-
-clear
-
-INFO "clear cache browser"
+ROUTINE
