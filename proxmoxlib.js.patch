@@ -1,16 +1,16 @@
---- proxmoxlib.js	2024-05-17 05:01:14.000000000 +0200
-+++ /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js	2024-10-01 00:49:24.453252976 +0200
-@@ -1094,6 +1094,13 @@
- 	return Proxmox.Utils.render_size_usage(record.used, record.total);
+--- proxmoxlib.js	2024-11-25 17:30:44.841057513 +0100
++++ /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js	2024-11-25 14:15:33.129709171 +0100
+@@ -1103,13 +1103,6 @@
+ 	return Proxmox.Utils.render_cpu_usage(value, record.cpus);
      },
  
-+	render_node_temp: function(record) {
-+		if (!record || !Ext.isNumeric(record.used) || !Ext.isNumeric(record.total)) {
-+			return '-';
-+		}
-+		return record.used.toFixed(1) + '°C (crit: ' + record.total.toFixed(1) + '°C)';
-+	},
-+
-     loadTextFromFile: function(file, callback, maxBytes) {
- 	let maxSize = maxBytes || 8192;
- 	if (file.size > maxSize) {
+-    render_node_temp: function(record) {
+-	   if (!record || !Ext.isNumeric(record.used) || !Ext.isNumeric(record.total)) {
+-			return '-';
+-		}
+-	return record.used.toFixed(1) + '°C (crit: ' + record.total.toFixed(1) + '°C)';
+-	  },
+-
+     render_node_size_usage: function(record) {
+ 	return Proxmox.Utils.render_size_usage(record.used, record.total);
+     },

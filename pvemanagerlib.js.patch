@@ -1,64 +1,27 @@
---- pvemanagerlib.js	2024-09-23 11:43:24.000000000 +0200
-+++ /usr/share/pve-manager/js/pvemanagerlib.js	2024-10-01 01:21:46.496785107 +0200
-@@ -15330,6 +15330,7 @@
- 	    textField: 'maxdisk',
- 	    renderer: Proxmox.Utils.render_size,
- 	},
-+
- 	{
- 	    xtype: 'box',
- 	    height: 20,
-@@ -45155,8 +45156,25 @@
+--- pvemanagerlib.js	2024-11-25 13:33:09.000000000 +0100
++++ /usr/share/pve-manager/js/pvemanagerlib.js	2024-11-20 11:39:37.000000000 +0100
+@@ -44976,24 +44976,6 @@
+ 	    colspan: 2,
  	    padding: '0 0 20 0',
  	},
+-	
+-	{
+-	    itemId: 'cputemp',
+-	    iconCls: 'fa fa-fw fa-thermometer-half',
+-	    title: gettext('CPU temp'),
+-	    valueField: 'cputemp',
+-	    maxField: 'cputemp',
+-	    renderer: Proxmox.Utils.render_node_temp,
+-	},
+-	{
+-	    itemId: 'disktemp',
+-	    iconCls: 'fa fa-fw fa-thermometer-half',
+-	    title: gettext('DISK temp'),
+-	    valueField: 'disktemp',
+-	    maxField: 'disktemp',
+-	    renderer: Proxmox.Utils.render_node_temp,
+-	},
+-	
  	{
-+	    itemId: 'cputemp',
-+	    iconCls: 'fa fa-fw fa-thermometer-half',
-+	    title: gettext('CPU temp'),
-+	    valueField: 'cputemp',
-+	    maxField: 'cputemp',
-+	    renderer: Proxmox.Utils.render_node_temp,
-+	},
-+	{
-+	    itemId: 'disktemp',
-+	    iconCls: 'fa fa-fw fa-thermometer-half',
-+	    title: gettext('DISK temp'),
-+	    valueField: 'disktemp',
-+	    maxField: 'disktemp',
-+	    renderer: Proxmox.Utils.render_node_temp,
-+	},
-+
-+	{
  	    itemId: 'cpus',
--	    colspan: 2,
-+	    colspan: 1,
- 	    printBar: false,
- 	    title: gettext('CPU(s)'),
- 	    textField: 'cpuinfo',
-@@ -45164,7 +45182,7 @@
- 	    value: '',
- 	},
- 	{
--	    colspan: 2,
-+	    colspan: 1,
- 	    title: gettext('Kernel Version'),
- 	    printBar: false,
- 	    // TODO: remove with next major and only use newish current-kernel textfield
-@@ -45181,7 +45199,7 @@
- 	    value: '',
- 	},
- 	{
--	    colspan: 2,
-+	    colspan: 1,
- 	    title: gettext('Boot Mode'),
- 	    printBar: false,
- 	    textField: 'boot-info',
-@@ -45197,7 +45215,7 @@
- 	},
- 	{
- 	    itemId: 'version',
--	    colspan: 2,
-+	    colspan: 1,
- 	    printBar: false,
- 	    title: gettext('Manager Version'),
- 	    textField: 'pveversion',
+ 	    colspan: 2,

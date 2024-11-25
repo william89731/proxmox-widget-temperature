@@ -138,21 +138,21 @@ PATCH() {
     if [ "${PATCH[*]}" == "false" ]; then
       ERROR "problem downlaod patch"
     else
-      command patch -b /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch >/dev/null 2>&1
+      command patch -b -R /usr/share/perl5/PVE/API2/Nodes.pm Nodes.pm.patch >/dev/null 2>&1
     fi
 
     command curl -sSfLo proxmoxlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/proxmoxlib.js.patch >/dev/null 2>&1 || PATCH+=("false")
     if [ "${PATCH[*]}" == "false" ]; then
       ERROR "problem downlaod patch"
     else
-      command patch -b /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch >/dev/null 2>&1
+      command patch -b -R /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js proxmoxlib.js.patch >/dev/null 2>&1
     fi
 
     command curl -sSfLo pvemanagerlib.js.patch https://raw.githubusercontent.com/william89731/proxmox-widget-temperature/refs/heads/main/pvemanagerlib.js.patch >/dev/null 2>&1 || PATCH+=("false")
     if [ "${PATCH[*]}" == "false" ]; then
       ERROR "problem downlaod patch"
     else
-      command patch -b /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch >/dev/null 2>&1
+      command patch -b -R /usr/share/pve-manager/js/pvemanagerlib.js pvemanagerlib.js.patch >/dev/null 2>&1
     fi
 
     # shellcheck disable=SC2035
@@ -218,7 +218,7 @@ ROUTINE() {
   while true; do
     OPTS=$(whiptail \
       --title "Proxmox Widget Temperature" \
-      --menu "Tested on pve-manager 8.2.7. Take your own risks!" 14 58 4 \
+      --menu "[tested on pve-manager 8.3.0]" 14 58 4 \
       "UPDATE" "update patch " \
       "APPLY" "apply patch " \
       "REMOVE" "remove patch " \
