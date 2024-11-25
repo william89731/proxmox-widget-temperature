@@ -10,8 +10,10 @@
 ![image](https://github.com/user-attachments/assets/4421b2c3-b5d3-493c-92bc-d5cda59b0cb7)
 
 ### Disclaimer
+
+- Tested on PVE 8.3.0
 - this mod must be erase after update packages
-- take your own risks!
+  
 
 
 ### Usage
