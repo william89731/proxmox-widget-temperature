@@ -37,9 +37,15 @@ and follow instruction
 
 ![image](https://github.com/user-attachments/assets/926af351-4365-45dc-8b9d-ae243bda0e29)
 
-  ```solution```:
+  ```Posible solutions```:
 
-  run command:
+  - check if module drivetemp is loaded ( see /etc/modules-load.d/ ). Temporal load module run:
+
+    ```bash
+    modprobe drivetemp
+    ``` 
+
+  - run command:
 
   ```bash
   sensor -j
