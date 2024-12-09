@@ -50,7 +50,7 @@ and follow instruction
   - run command:
 
   ```bash
-  sensor -j
+  sensors -j
   ```
   the output read data sensors in your machine.
 
